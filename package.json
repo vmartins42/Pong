@@ -1,0 +1,60 @@
+{
+  "name": "React-starterKit",
+  "version": "0.0.1",
+  "author": "Henri Floren",
+  "license": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "webpack-dev-server --colors --hot --inline --host 0.0.0.0 --port 5000"
+  },
+  "dependencies": {
+    "cross-env": "^5.0.5",
+    "css-loader": "^0.26.1",
+    "immutable": "^3.8.1",
+    "less": "^3.0.1",
+    "less-loader": "^4.1.0",
+    "prop-types": "^15.6.1",
+    "react-dom": "^16.3.2",
+    "react-redux": "^4.4.5",
+    "react-router": "^3.0.2",
+    "react-router-redux": "^4.0.8",
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.0.1"
+  },
+  "devDependencies": {
+    "autoprefixer-loader": "^3.2.0",
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-import": "^1.6.7",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.19",
+    "eslint-plugin-react": "^7.4.0",
+    "node-sass": "^4.5.2",
+    "nyc": "^6.4.4",
+    "postcss-scss": "^1.0.3",
+    "react": "^16.2.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.19.0",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12",
+    "webpack-dev-server": "^3.1.1"
+  },
+  "nyc": {
+    "exclude": [
+      "build"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react",
+      "stage-0"
+    ],
+    "plugins": [
+      "transform-runtime"
+    ]
+  }
+}

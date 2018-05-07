@@ -9,23 +9,30 @@ const speed = 2
 const speedVec = 1
 const angleMax = 0.8
 const angleMin = -0.8
-
+let game = null
 class Example extends Component {
 
   static propTypes = {
     example: PropTypes.func,
   }
 
-  componentWillMount() {
-       setInterval((() => {
-           this.moveBall()
-     }), 10)
-  }
+ componentDidMount() {
+     let direction = this.state.direction
+     let vecDirecteur = this.state.vecDirecteur
+     this.setState({ballPos: {form: 'o', y: 1200, x: 50, direction: -speed, vecDirecteur: 0}, isStart: false})
+     this.focusDiv();
+
+
+}
+
+focusDiv() {
+  ReactDOM.findDOMNode(this.refs.bigDiv).focus();
+}
+
 
   moveBall = () => {
       let direction = this.state.direction
       let vecDirecteur = this.state.vecDirecteur
-
       let barre1 = ReactDOM.findDOMNode(this.refs.idUp1).getBoundingClientRect()
       let barre2 = ReactDOM.findDOMNode(this.refs.idUp2).getBoundingClientRect()
       let ballon = ReactDOM.findDOMNode(this.refs.balloon).getBoundingClientRect()
@@ -40,54 +47,64 @@ class Example extends Component {
           direction= -speed
           vecDirecteur=  Math.random() * (angleMax - (angleMin)) + (angleMin) * speedVec
       }
-
-       if ((bar1.x <= ballon.x && bar1.x + 1000 >= ballon.x) && ballon.y < 10) {
-
-              vecDirecteur=  Math.random() * (angleMax - (0.1)) + (0.1) * speedVec
-       }
-       console.log(bar2);
-       if ((bar1.x <= ballon.x && bar1.x + 1000 >= ballon.x) && ballon.y > 399) {
-
-              vecDirecteur=  Math.random() * (-0.1 - (angleMin)) + (angleMin) * speedVec
-       }
-
-      if (this.state.ballPos.y < 890){
-          this.setState({ballPos: {form: 'o', y: this.state.ballPos.y = 1200, x: this.state.ballPos.x = 50, direction: -speed, vecDirecteur: 0}})
-      } else if (this.state.ballPos.y > 1661){
-          this.setState({ballPos: {form: 'o', y: this.state.ballPos.y = 1200, x: this.state.ballPos.x = 50, direction: speed, vecDirecteur: 0}})
+      if ((bar1.x <= ballon.x && bar1.x + 1000 >= ballon.x) && ballon.y < 8.5) {
+          vecDirecteur=  Math.random() * (angleMax - (0.1)) + (0.1) * speedVec
       }
-      this.setState({ballPos: {form: 'o', y: this.state.ballPos.y + direction, x: this.state.ballPos.x + vecDirecteur }, direction, vecDirecteur })
+      if ((bar1.x <= ballon.x && bar1.x + 1000 >= ballon.x) && ballon.y > 399) {
+          vecDirecteur=  Math.random() * (-0.1 - (angleMin)) + (angleMin) * speedVec
+      }
+      if (this.state.ballPos.y < 890){
+          this.state.scorePtwo++;
+          this.setState({ballPos: {form: 'o', y: this.state.ballPos.y = 1200, x: this.state.ballPos.x = 50, direction: -speed, vecDirecteur: 0}, isStart: false})
+           clearInterval(game)
+      } else if (this.state.ballPos.y > 1661){
+          this.state.scorePone++;
+          this.setState({ballPos: {form: 'o', y: this.state.ballPos.y = 1200, x: this.state.ballPos.x = 50, direction: speed, vecDirecteur: 0}, isStart: false})
+           clearInterval(game)
+      }
+        this.setState({ballPos: {form: 'o', y: this.state.ballPos.y + direction, x: this.state.ballPos.x + vecDirecteur }, direction, vecDirecteur })
 }
 
-  movePlayers = (e) => {
-      if(e.keyCode === 65){ this.setState({up1: this.state.up1 + 10})}
-      if(e.keyCode === 81){ this.setState({up1: this.state.up1 - 10})}
-      if(e.keyCode === 38){ this.setState({up2: this.state.up2 - 10})}
-      if(e.keyCode === 40){ this.setState({up2: this.state.up2 + 10})}
-  }
+movePlayers = (e) => {
+
+    if (e.keyCode === 65){ this.setState({up1: this.state.up1 + 10})}
+    if (e.keyCode === 81){ this.setState({up1: this.state.up1 - 10})}
+    if (e.keyCode === 38){ this.setState({up2: this.state.up2 - 10})}
+    if (e.keyCode === 40){ this.setState({up2: this.state.up2 + 10})}
+    if (e.keyCode === 32 && !this.state.isStart){
+    game = setInterval((() => {
+        this.moveBall()
+    }), 10)
+    this.setState({isStart: true})
+}
+}
 
   state = {
     text: "Hello from my Component",
     direction:  -speed,
+    isStart: false,
     vecDirecteur: 0,
-    up1: 10,
-    up2: 10,
+    up1: 180,
+    up2: 50,
+    scorePone: 0,
+    scorePtwo: 0,
     ballPos: {
         x: 1500,
-        y: 50,
+        y: 10,
         form: 'o'
     }
   }
 
   render () {
-     const { text, up1, up2 }  = this.state
+     const { text, up1, up2,  }  = this.state
      const { example } = this.props
      let toto = ['|','|','|','|']
-
      return (
-        <div onKeyDown={this.movePlayers}className="text" tabIndex="0">
-            <div ref="bar1" style={{ height: '10px', width: '32%', position: 'absolute', background: 'red', top: '10px', left: '34%'}} />
-            <div ref="bar2" style={{ height: '10px', width: '32%', position: 'absolute', background: 'red', top: '400px', left: '34%'}} />
+        <div ref="bigDiv" onKeyDown={this.movePlayers} className="text" tabIndex="0">
+            <div ref="bar1" style={{ height: '412px', width: '32%', position: 'absolute', top: '10px', left: '34%', border: 'thick solid #FFFFFF'}} />
+            <div ref="bar2" style={{ height: '10px', width: '32%', position: 'absolute', top: '425px', left: '34%'}} />
+            <div class="score" style={{ height: '50px', width: '50px', position:'absolute', top: '200px', left: '30%', textAlign: 'center', border: 'thick solid #FFFFFF'}}>{this.state.scorePone}</div>
+            <div class="score" style={{ height: '50px', width: '50px', position:'absolute', top: '200px',  left: '68%', textAlign: 'center', border: 'thick solid #FFFFFF'}}>{this.state.scorePtwo}</div>
                 <div ref="idUp1" style={{display: 'flex', flexDirection: 'column-reverse', top: `${up1}px`, left: '35%', position: 'relative'}}>
                 {toto.map((e, key) => {
                     return(
@@ -107,8 +124,7 @@ class Example extends Component {
                 )
                 })}
                 </div>
-
-      </div>
+        </div>
     )
   }
 }

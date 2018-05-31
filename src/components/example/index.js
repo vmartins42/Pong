@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import example from '../../actions/example'
- import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom';
 import "./style.scss"
 
 const speed = 2
@@ -10,27 +10,36 @@ const speedVec = 1
 const angleMax = 0.8
 const angleMin = -0.8
 let game = null
+
+
 class Example extends Component {
 
   static propTypes = {
     example: PropTypes.func,
   }
 
- componentDidMount() {
+
+componentDidMount() {
      let direction = this.state.direction
      let vecDirecteur = this.state.vecDirecteur
      this.setState({ballPos: {form: 'o', y: 1200, x: 50, direction: -speed, vecDirecteur: 0}, isStart: false})
      this.focusDiv();
-
-
+     this.startGameSocket()
 }
 
 focusDiv() {
   ReactDOM.findDOMNode(this.refs.bigDiv).focus();
 }
 
+startGameSocket = () => {
 
-  moveBall = () => {
+        socket.on('action', ((e) => {
+            console.log(e);
+            this.setState({[e.toUpdate]: e.value})
+        }))
+}
+
+moveBall = () => {
       let direction = this.state.direction
       let vecDirecteur = this.state.vecDirecteur
       let barre1 = ReactDOM.findDOMNode(this.refs.idUp1).getBoundingClientRect()
@@ -66,25 +75,25 @@ focusDiv() {
 }
 
 movePlayers = (e) => {
-
-    if (e.keyCode === 65){ this.setState({up1: this.state.up1 + 10})}
-    if (e.keyCode === 81){ this.setState({up1: this.state.up1 - 10})}
-    if (e.keyCode === 38){ this.setState({up2: this.state.up2 - 10})}
-    if (e.keyCode === 40){ this.setState({up2: this.state.up2 + 10})}
+    if (e.keyCode === 65){ this.setState({up1: this.state.up1 + 10}); socket.emit('movePlayer', {toUpdate: 'up1', value: this.state.up1})}
+    if (e.keyCode === 81){ this.setState({up1: this.state.up1 - 10}); socket.emit('movePlayer', {toUpdate: 'up1', value: this.state.up1})}
+    if (e.keyCode === 38){ this.setState({up2: this.state.up2 - 10}); socket.emit('movePlayer', {toUpdate: 'up2', value: this.state.up2})}
+    if (e.keyCode === 40){ this.setState({up2: this.state.up2 + 10}); socket.emit('movePlayer', {toUpdate: 'up2', value: this.state.up2})}
     if (e.keyCode === 32 && !this.state.isStart){
-    game = setInterval((() => {
-        this.moveBall()
-    }), 10)
+        game = setInterval((() => {
+            this.moveBall()
+        }), 10)
     this.setState({isStart: true})
-}
+    // socket.emit('movePlayer', this.state.isStart)
+    }
 }
 
   state = {
-    text: "Hello from my Component",
+    text: "Hello from my Compfonent",
     direction:  -speed,
     isStart: false,
     vecDirecteur: 0,
-    up1: 180,
+    up1: 200,
     up2: 50,
     scorePone: 0,
     scorePtwo: 0,
@@ -99,6 +108,7 @@ movePlayers = (e) => {
      const { text, up1, up2,  }  = this.state
      const { example } = this.props
      let toto = ['|','|','|','|']
+
      return (
         <div ref="bigDiv" onKeyDown={this.movePlayers} className="text" tabIndex="0">
             <div ref="bar1" style={{ height: '412px', width: '32%', position: 'absolute', top: '10px', left: '34%', border: 'thick solid #FFFFFF'}} />
@@ -128,7 +138,6 @@ movePlayers = (e) => {
     )
   }
 }
-
 
 const mapDispatchToProps = (dispatch) => {
   return {
